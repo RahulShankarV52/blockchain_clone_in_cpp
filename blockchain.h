@@ -1,4 +1,4 @@
-#ifdef BLOCKCHAIN_H
+#ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 
 #include "Block.h"
@@ -21,6 +21,15 @@ class BlockChain{
     
     const std::vector<Block>& getChain() const {
         return _chain;
+    }
+
+    bool isvalidChain(){
+      for(uint32_t i=1;i<_chain.size();i++){
+        if(_chain[i]._prevHash!=_chain[i-1]._data){
+          return false;
+        }
+      }
+      return true;
     }
 };
 #endif  

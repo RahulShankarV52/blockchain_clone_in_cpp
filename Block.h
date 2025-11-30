@@ -1,5 +1,5 @@
-#ifdef BLOCK
-#define BLOCK
+#ifndef BLOCK_H
+#define BLOCK_H
 
 #include<string>
 #include <ctime>
@@ -15,9 +15,9 @@ class Block{
     std::string _prevHash;
     time_t _time;
 
-    Block(uint32_t index,const std::string &data, std::string prevHash):_index(index),_data(data),_prevHash(prevHash),_nonce(0)
+    Block(uint32_t index,const std::string &data, std::string prevHash):_index(index),_data(data),_prevHash(prevHash)
     {
-      this._time=time(nullptr);
+      _time=time(nullptr);
     }
 };
 
