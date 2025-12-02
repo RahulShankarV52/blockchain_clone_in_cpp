@@ -18,7 +18,7 @@ class Block{
     std::string _prevHash;
     time_t _time;
 
-    Block(uint32_t index,const std::string &data, std::string &prevHash):_index(index),_data(data),_prevHash(prevHash),_nonce(0)
+    Block(uint32_t index,const std::string &data, const std::string &prevHash):_index(index),_data(data),_prevHash(prevHash),_nonce(0)
     {
       _hash=CalculateHash();
       _time=time(nullptr);
@@ -27,6 +27,15 @@ class Block{
       std::stringstream ss;
       ss<<_index<<_time<<_data<<_prevHash<<_nonce;
       return sha256(ss.str());
+    }
+    void MineBlock(uint32_t difficulty){
+      std::string target(difficulty,'0');
+
+      do{
+        _nonce++;
+        _hash=CalculateHash();
+      }while(_hash.substr(0,difficulty)!=target);
+      std::cout<<"Block mined: "<<_hash<<std::endl;
     }
 };
 

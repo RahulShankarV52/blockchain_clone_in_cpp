@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include <cstdint>
 #include "sha256.h"
 
 // Rotates bits to the right (Circular Shift)
