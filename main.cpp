@@ -47,8 +47,10 @@ int main() {
                  break;
                }
         case 4:
-          std::cout<<"Exiting Program"<<std::endl;
-          return 0;
+               std::cout << "Saving chain to file..." << std::endl;
+               myCoin.saveChain();
+               std::cout << "Exiting Program" << std::endl;
+               return 0;
       }
 
     }

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "Block.h"
 #include "transactions.h" 
 
@@ -12,14 +13,20 @@ private:
     std::vector<Transaction> _pendingTransactions;
     uint32_t _difficulty;
     uint32_t _miningReward;
+    const std::string _filename="blockchain.dat";
 
 public:
     Blockchain() {
-        _difficulty = 4;
-        _miningReward = 100; 
-        
+      _difficulty = 4;
+      _miningReward = 100; 
+
+      if (!loadChain()) {
+        std::cout << "No existing chain found. Creating Genesis Block." << std::endl;
         std::vector<Transaction> genesisTransactions;
         _chain.emplace_back(Block(0, genesisTransactions, "0000"));
+      } else {
+        std::cout << "Loaded blockchain from " << _filename << std::endl;
+      }
     }
 
     void addTransaction(Transaction tx) {
@@ -62,6 +69,41 @@ public:
             }
         }
         return true;
+    }
+
+    void saveChain(){
+      std::ofstream out(_filename,std::ios::binary);
+      if(!out) {
+        std::cout << "Error: Could not save to file." << std::endl;
+        return;
+      }
+      size_t chainSize = _chain.size();
+      out.write((char*)&chainSize, sizeof(chainSize));
+
+      for(const auto& block : _chain) {
+        block.serialize(out);
+      }
+      out.close();
+      std::cout << "Blockchain saved to " << _filename << std::endl;
+    }
+
+    bool loadChain(){
+      std::ifstream in(_filename,std::ios::binary);
+      if(!in) {
+        return false;
+      }
+      size_t chainSize;
+      in.read((char*)&chainSize, sizeof(chainSize));
+
+      _chain.clear();
+      _chain.resize(chainSize);
+
+      for(int i=0;i<chainSize;i++){
+        _chain[i].deserialize(in);
+      }
+
+      in.close();
+      return true;
     }
 };
 
