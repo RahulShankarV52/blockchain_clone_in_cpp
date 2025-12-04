@@ -6,26 +6,34 @@
 #include <cstdint>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include "sha256.h"
+#include "transactions.h"
 
 class Block{
   public:
     uint32_t _index;
     uint32_t _nonce;
-    std::string _data;
+    std::vector<Transaction> _transactions;
     std::string _hash;
     std::string _prevHash;
     time_t _time;
 
-    Block(uint32_t index,const std::string &data, const std::string &prevHash):_index(index),_data(data),_prevHash(prevHash),_nonce(0)
+    Block(uint32_t index,const std::vector<Transaction> &transactions, const std::string &prevHash):_index(index),_transactions(transactions),_prevHash(prevHash),_nonce(0)
     {
+      _time=std::time(nullptr);
       _hash=CalculateHash();
-      _time=time(nullptr);
     }
     std::string CalculateHash() const{
       std::stringstream ss;
-      ss<<_index<<_time<<_data<<_prevHash<<_nonce;
+      ss<<_index<<_time;
+
+      for(const auto tx: _transactions){
+        ss<<tx.toString();
+      }
+
+      ss<<_prevHash<<_nonce;
       return sha256(ss.str());
     }
     void MineBlock(uint32_t difficulty){
